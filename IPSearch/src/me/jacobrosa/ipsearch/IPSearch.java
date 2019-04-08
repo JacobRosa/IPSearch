@@ -151,6 +151,7 @@ public class IPSearch extends JPanel{
 
 		//Startup message
 		log("Copyright © 2019 Jacob Rosa. All rights reserved.");
+		log("By using this software you agree to follow the the license and disclaimer at https://github.com/JacobRosa/IPSearch/");
 	}
 
 	//Add message to frame log
