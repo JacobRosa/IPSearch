@@ -46,7 +46,7 @@ public class IPSearch extends JPanel{
 	private JTextArea frameLog;
 	private JButton lookupButton;
 
-	//Program info
+	//Program info 
 	private final String title = "Simple IP Lookup Tool";
 	private final String version = "1.0";
 
