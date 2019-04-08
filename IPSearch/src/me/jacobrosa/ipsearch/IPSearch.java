@@ -37,7 +37,7 @@ public class IPSearch extends JPanel{
 
 	private static final long serialVersionUID = 6401044427898159938L;
 
-	//Window
+	//Window variables
 	private JFrame frame;
 	private JPanel topPanel, middlePanel, bottomPanel;
 	private JLabel inputLabel;
