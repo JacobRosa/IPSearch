@@ -13,14 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import org.json.JSONObject;
 
 public class IPSearch extends JPanel{
 
@@ -45,13 +36,13 @@ public class IPSearch extends JPanel{
 	private JScrollPane scrollBar;
 	private JTextArea frameLog;
 	private JButton lookupButton;
+	
+	//Log variables
+	private Logger logger;
 
 	//Program info 
 	private final String title = "Simple IP Lookup Tool";
-	private final String version = "1.0";
-
-	//Search History
-	private List<String> searchedLog;
+	private final String version = "1.1";
 
 	//Placeholder used for search history indexing
 	private int historyIndex = 1;
@@ -73,7 +64,9 @@ public class IPSearch extends JPanel{
 		frameLog = new JTextArea(20, 50);
 		scrollBar = new JScrollPane(frameLog);
 		lookupButton = new JButton("Look Up");
-		searchedLog = new ArrayList<String>();
+		
+		//Init logger
+		this.logger = new Logger(frameLog);
 
 		//Frame setup
 		frame.setSize(700, 460);
@@ -117,9 +110,9 @@ public class IPSearch extends JPanel{
 
 				//Handle up arrow pressed
 				if(keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_KP_UP) {
-					int nextIndex = searchedLog.size() - historyIndex;
+					int nextIndex = logger.getHistoryCount() - historyIndex;
 					if(nextIndex >= 0) {
-						ipInput.setText(searchedLog.get(nextIndex));
+						ipInput.setText(logger.getFromHistory(nextIndex));
 						historyIndex++;
 						return;
 					}
@@ -150,99 +143,22 @@ public class IPSearch extends JPanel{
 		frame.setVisible(true); //Show window
 
 		//Startup message
-		log("Copyright © 2019 Jacob Rosa. All rights reserved.");
-		log("By using this software you agree to follow the the license and disclaimer at https://github.com/JacobRosa/IPSearch/");
+		logger.print("Copyright © 2019 Jacob Rosa. All rights reserved.");
+		logger.print("By using this software you accept the license and disclaimer at https://github.com/JacobRosa/IPSearch/");
+		logger.print("Type '/help' for a list of commands!");
 	}
 
-	//Add message to frame log
-	private void log(String msg) {
-		frameLog.setText(frameLog.getText() + msg + "\n"); //Add message to log and add new line
-	}
-
-	//Add items to history log
-	private void addToHistoryLog(String string) {
-		if(string.isEmpty() || string.equals(null))
-			return;
-		int logCount = searchedLog.size(); //Get current count of logs
-		int maxLogCount = 100; //Max amount of items we want saved
-		if(logCount >= maxLogCount)
-			searchedLog.remove(0); //Remove oldest item
-		searchedLog.add(string); //Add new item
-	}
-
-	//Lookup IP method
+	//Handle lookup
 	public void lookup() {
 		historyIndex = 1; //Set history index back to 1
 		lookupButton.setEnabled(false); //Prevent user from submitting while running
 
-		String inputUrl = ipInput.getText().toString(); //Get IP input text
-		String baseUrl = "http://ip-api.com/json/" + inputUrl; //Base URL for the IP API
-
-		URL url;
-
-		try {
-			url = new URL(baseUrl); //Set URL to baseUrl
-			log("Starting queue...");
-			URLConnection conn = url.openConnection(); //Open connection
-			BufferedReader br;
-			try {
-				br = new BufferedReader(new InputStreamReader(conn.getInputStream())); //Initialize buffer reader
-			}catch(UnknownHostException connectionException) {
-				log("Connection Error.");
-				addToHistoryLog(inputUrl); //Add input to history
-				ipInput.setText(""); //Clear input field
-				lookupButton.setEnabled(true); //Enable submit button again
-				return;
-			}
-
-			String inputLine, jsonString = null;
-
-			while ((inputLine = br.readLine()) != null) //Read through the lines of text
-				jsonString = inputLine;
-
-			br.close(); //Close the stream
-
-			if(jsonString.isEmpty() || jsonString.equals(null)) {
-				ipInput.setText(""); //Clear input field
-				lookupButton.setEnabled(true); //Enable submit button again
-				return;
-			}
-
-			JSONObject jsonObject = new JSONObject(jsonString); //Create JsonObject
-			String status = jsonObject.getString("status"); //Get response status
-
-			if(status.equals("success")) {
-				log("--------------------------------------------------------------------");
-				log("Query: " + (jsonObject.has("query") ? jsonObject.getString("query") : inputUrl));
-				if(jsonObject.has("country") && jsonObject.has("countryCode")) 
-					log("Country: " + "(" + jsonObject.getString("countryCode") + ") " + jsonObject.getString("country"));
-				if(jsonObject.has("regionName")) 
-					log("Region: " + jsonObject.getString("regionName"));
-				if(jsonObject.has("city")) 
-					log("City: " + jsonObject.getString("city"));
-				if(jsonObject.has("zip")) 
-					log("Zip: " + jsonObject.getString("zip"));
-				if(jsonObject.has("isp")) 
-					log("ISP: " + jsonObject.getString("isp"));
-				if(jsonObject.has("org")) 
-					log("Organization: " + jsonObject.getString("org"));
-				log("--------------------------------------------------------------------");
-			}else{
-				log("--------------------------------------------------------------------");
-				log("Query: " + (jsonObject.has("query") ? jsonObject.getString("query") : inputUrl));
-				log("Error: Invalid IP");
-				log("--------------------------------------------------------------------");
-			}
-
-			if(jsonObject.has("query"))
-				addToHistoryLog(jsonObject.getString("query")); //Add searched IP to history
-
-		}catch (IOException ex){
-			log("An error has occured.");
-		}
-
+		String string = ipInput.getText().toString(); //Get IP input text
+		logger.handleInput(string); //Handle input
+		
+		lookupButton.setEnabled(true); //Enable button
 		ipInput.setText(""); //Clear input field
-		lookupButton.setEnabled(true); //Enable search button again
+		
 	}
 
 }
