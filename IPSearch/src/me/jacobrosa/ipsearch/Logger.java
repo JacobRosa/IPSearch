@@ -34,7 +34,7 @@ public class Logger {
 	public void print(String string) {
 		this.textarea.setText(textarea.getText() + string + "\n");
 	}
-	 
+	
 	//Handle input
 	public void handleInput(String string) {
 		//Check if its a command
