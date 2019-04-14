@@ -9,7 +9,10 @@ import me.jacobrosa.ipsearch.commands.CommandHandler;
 
 public class Logger {
 
-	//Text area variable
+	//Instances
+	private IPSearch ipSearch;
+	
+	//Variables
 	private JTextArea textarea;
 	
 	//Command handler variable
@@ -18,11 +21,17 @@ public class Logger {
 	//Search history list
 	private List<String> logHistory;
 	
-	public Logger(JTextArea textarea) {
+	public Logger(IPSearch ipSearch) {
 		//Init
-		this.textarea = textarea;
+		this.ipSearch = ipSearch;
+		this.textarea = ipSearch.frameLog;
 		this.commandHandler = new CommandHandler(this);
 		this.logHistory = new ArrayList<String>();
+	}
+	
+	//Get main instance
+	public IPSearch getMainInstance() {
+		return ipSearch;
 	}
 	
 	//Get text area

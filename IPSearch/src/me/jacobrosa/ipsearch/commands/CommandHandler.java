@@ -19,7 +19,9 @@ public class CommandHandler {
 		
 		//Add commands
 		addCommand("clear", new CommandClear());
+		addCommand("clearhistory", new CommandClearHistory());
 		addCommand("help", new CommandHelp());
+		addCommand("settheme", new CommandSetTheme());
 	}
 	
 	//Add command
@@ -30,15 +32,17 @@ public class CommandHandler {
 	//Check if command is valid
 	public boolean isValidCommand(String string) {
 		string = string.toLowerCase().substring(1); //Put string to lower case and remove the slash
-		return this.commands.containsKey(string.toLowerCase()); //Check if command list contains command
+		String[] command = string.split(" ");
+		return this.commands.containsKey(command[0].toLowerCase()); //Check if command list contains command
 	}
 	
 	public void runCommand(String string) {
 		string = string.toLowerCase().substring(1); //Put string to lower case and remove the slash
 		//Check if command list contains command
-		if(commands.containsKey(string)) {
-			Command command = commands.get(string); //Get command class
-			command.runCommand(logger); //Run command
+		String[] cmd = string.split(" "); //To handle commands with arguments
+		if(commands.containsKey(cmd[0])) {
+			Command command = commands.get(cmd[0]); //Get command class
+			command.runCommand(logger, string); //Run command
 			return;
 		}else {
 			invalidCommand(); //Print invalid command message

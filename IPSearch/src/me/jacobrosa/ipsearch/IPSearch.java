@@ -9,6 +9,7 @@
 package me.jacobrosa.ipsearch;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -34,7 +35,7 @@ public class IPSearch extends JPanel{
 	private JLabel inputLabel;
 	private JTextField ipInput;
 	private JScrollPane scrollBar;
-	private JTextArea frameLog;
+	public JTextArea frameLog;
 	private JButton lookupButton;
 	
 	//Log variables
@@ -43,6 +44,8 @@ public class IPSearch extends JPanel{
 	//Program info 
 	private final String title = "Simple IP Lookup Tool";
 	private final String version = "1.1";
+	
+	private final Color defaultColor = new Color(238, 238, 238);
 
 	//Placeholder used for search history indexing
 	private int historyIndex = 1;
@@ -65,8 +68,10 @@ public class IPSearch extends JPanel{
 		scrollBar = new JScrollPane(frameLog);
 		lookupButton = new JButton("Look Up");
 		
+		applyTheme(Theme.LIGHT); //Set default light them colors
+
 		//Init logger
-		this.logger = new Logger(frameLog);
+		this.logger = new Logger(getInstance());
 
 		//Frame setup
 		frame.setSize(700, 460);
@@ -147,9 +152,13 @@ public class IPSearch extends JPanel{
 		logger.print("By using this software you accept the license and disclaimer at https://github.com/JacobRosa/IPSearch/");
 		logger.print("Type '/help' for a list of commands!");
 	}
+	
+	public IPSearch getInstance() {
+		return this;
+	}
 
 	//Handle lookup
-	public void lookup() {
+	private void lookup() {
 		historyIndex = 1; //Set history index back to 1
 		lookupButton.setEnabled(false); //Prevent user from submitting while running
 
@@ -159,6 +168,33 @@ public class IPSearch extends JPanel{
 		lookupButton.setEnabled(true); //Enable button
 		ipInput.setText(""); //Clear input field
 		
+	}
+	
+	public void applyTheme(Theme theme) {
+		switch(theme) {
+		case LIGHT:
+			topPanel.setBackground(defaultColor);
+			middlePanel.setBackground(defaultColor);
+			bottomPanel.setBackground(defaultColor);
+			inputLabel.setForeground(Color.black);
+			ipInput.setBackground(Color.white);
+			frameLog.setBackground(Color.white);
+			frameLog.setForeground(Color.black);
+			scrollBar.setBackground(defaultColor);
+			scrollBar.setBorder(null);
+			break;
+		case DARK:
+			topPanel.setBackground(Color.darkGray);
+			middlePanel.setBackground(Color.darkGray);
+			bottomPanel.setBackground(Color.darkGray);
+			inputLabel.setForeground(Color.white);
+			ipInput.setBackground(Color.gray);
+			frameLog.setBackground(Color.gray);
+			frameLog.setForeground(Color.white);
+			scrollBar.setBackground(Color.darkGray);
+			scrollBar.setBorder(null);
+			break;
+		}
 	}
 
 }
