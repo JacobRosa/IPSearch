@@ -17,6 +17,9 @@ public class CommandSetTheme extends Command{
 				logger.print("Invalid theme!");
 			}else {
 				logger.getMainInstance().applyTheme(theme); //Apply the theme
+				logger.print("Theme set to " + theme.name().toString().toLowerCase() + ".");
+				if(theme == Theme.DARK)
+					logger.print("Note: Program will reset to light mode once closed!");
 			}
 		}else {
 			logger.print("Invalid argument for /settheme <light|dark>");
