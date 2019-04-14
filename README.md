@@ -4,10 +4,15 @@ Simple Java IP lookup tool
 # Installation
 This program requires JavaSE-1.8 or later to run.
 
+Download the runnable jar [here](http://www.mediafire.com/file/q8q2v59v5kjn7yo/IPSearch-1.0.1.zip/file)!
+
 # Usage
 Type an IP in the input field and press the **Lookup IP** button to find out information about the IP. 
 
 You can also press the up arrow while the input field is focused to view last entered query.
+
+# Commands
+Use commands by starting your input with "/". Type "/help" for a list of available commands.
 
 # License
 You are free to use this software as you like as long as it is not with malice intent. You may not modify the code nor claim the software or code as your own. By using this software you agree to this license and acknowledge the disclaimer.
